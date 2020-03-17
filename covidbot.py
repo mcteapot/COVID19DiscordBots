@@ -11,6 +11,7 @@ class Commands(commands.Cog):
     @commands.command(
         name='ping',
         description='The ping command',
+        brief='A basic ping command',
         aliases=['p']
     )
     async def ping_command(self, ctx):
@@ -26,4 +27,15 @@ class Commands(commands.Cog):
         # Since it takes a while to send the messages
         # it will calculate how much time it takes to edit an message.
         # It depends usually on your internet connection speed
+        return
+
+    @commands.command(
+        name='square',
+        description='Add a number after square command to get square root',
+        brief='Find square root of a numer',
+        aliases=['s']
+    )
+    async def square(self, ctx, number):
+        squared_value = int(number) * int(number)
+        await ctx.send(str(number) + " sqared is " + str(squared_value))
         return

@@ -6,7 +6,6 @@ import asyncio
 import discord
 
 from discord.ext import commands
-from datetime import datetime as d
 
 
 def get_prefix(client, message):
