@@ -1,3 +1,5 @@
+import requests
+import json
 from discord.ext import commands
 from datetime import datetime as d
 
@@ -29,6 +31,7 @@ class Commands(commands.Cog):
         # It depends usually on your internet connection speed
         return
 
+    # Find Square Root
     @commands.command(
         name='square',
         description='Add a number after square command to get square root',
@@ -38,4 +41,38 @@ class Commands(commands.Cog):
     async def square(self, ctx, number):
         squared_value = int(number) * int(number)
         await ctx.send(str(number) + " sqared is " + str(squared_value))
+        return
+
+    # Get virus info for country
+    # Data form https://github.com/nat236919/Covid2019API
+    @commands.command(
+        name='country',
+        description='Get info of virus of country using ISO ALPHA-2',
+        brief='Virus stats per country ISO ALPHA-2',
+        aliases=['c']
+    )
+    async def virus_country_info(self, ctx, isoalpha2code):
+        isoalpha2code = isoalpha2code.lower()
+        request_url = 'https://covid2019-api.herokuapp.com/country/' + isoalpha2code
+        r = requests.get(url=request_url)
+        info_null = 'Data Not Found' 
+        if r.status_code == 200:
+            # On scuess will get data on country 
+            print('Success!')
+            print(r.json())
+            data = r.json()
+            data_keys = list(data.keys())
+            # Last check to see if real country
+            if data_keys[0] == 'dt':
+                await ctx.send(info_null)
+            else:
+                info_country =  'Country : ' + data_keys[0] + '\n'
+                info_last_update = 'Last Update : ' + data[data_keys[1]]  + '\n'
+                info_confirmed = 'Confirmed : ' + str(data[data_keys[0]]['confirmed'])  + '\n'
+                info_deaths = 'Deaths : ' + str(data[data_keys[0]]['deaths']) + '\n' 
+                info_recovered = 'Recovered : ' + str(data[data_keys[0]]['recovered']) + '\n' 
+                await ctx.send(info_country + info_last_update + info_confirmed + info_deaths + info_recovered)
+        elif r.status_code == 404:
+            print(info_null)
+            await ctx.send(info_null)
         return
