@@ -22,7 +22,7 @@ def get_prefix(client, message):
 
 bot = commands.Bot(                         # Create a new bot
     command_prefix=get_prefix,              # Set the prefix
-    description='A bot for tracking COVID-19',  # Set a description for the bot
+    description='Bot tracking COVID-19 \n ISO2 Country Codes : https://www.iban.com/country-codes',  # Set a description for the bot
     owner_id=374886124126208000,            # Your unique User ID
     case_insensitive=True                   # Make the commands case insensitive
 )

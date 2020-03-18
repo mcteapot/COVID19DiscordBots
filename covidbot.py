@@ -1,5 +1,8 @@
 import requests
 import json
+
+import settings
+
 from discord.ext import commands
 from datetime import datetime as d
 
@@ -13,7 +16,7 @@ class Commands(commands.Cog):
     @commands.command(
         name='ping',
         description='The ping command',
-        brief='A basic ping command',
+        brief='(!ping, !p)A basic ping command',
         aliases=['p']
     )
     async def ping_command(self, ctx):
@@ -35,7 +38,7 @@ class Commands(commands.Cog):
     @commands.command(
         name='square',
         description='Add a number after square command to get square root',
-        brief='Find square root of a numer',
+        brief='(!square, !s) Find square root of a numer',
         aliases=['s']
     )
     async def square(self, ctx, number):
@@ -48,7 +51,7 @@ class Commands(commands.Cog):
     @commands.command(
         name='country',
         description='Get info of virus of country using ISO ALPHA-2',
-        brief='Virus stats per country ISO ALPHA-2',
+        brief='(!country ISO2, !c ISO2) Stats per country ISO ALPHA-2',
         aliases=['c']
     )
     async def virus_country_info(self, ctx, isoalpha2code):
@@ -56,9 +59,10 @@ class Commands(commands.Cog):
         request_url = 'https://covid2019-api.herokuapp.com/country/' + isoalpha2code
         r = requests.get(url=request_url)
         info_null = 'Data Not Found' 
+        settings.pings = settings.pings + 1
         if r.status_code == 200:
             # On scuess will get data on country 
-            print('Success!')
+            print('Success! ' + str(settings.pings))
             print(r.json())
             data = r.json()
             data_keys = list(data.keys())
@@ -72,6 +76,34 @@ class Commands(commands.Cog):
                 info_deaths = 'Deaths : ' + str(data[data_keys[0]]['deaths']) + '\n' 
                 info_recovered = 'Recovered : ' + str(data[data_keys[0]]['recovered']) + '\n' 
                 await ctx.send(info_country + info_last_update + info_confirmed + info_deaths + info_recovered)
+        elif r.status_code == 404:
+            print(info_null)
+            await ctx.send(info_null)
+        return
+
+    # Get virus info of total worldwide
+    # Data form https://github.com/nat236919/Covid2019API
+    @commands.command(
+        name='total',
+        description='Get info of total effected by virus',
+        brief='(!total, !t) Stats total of worldwide',
+        aliases=['t']
+    )
+    async def virus_total_info(self, ctx):
+        request_url = 'https://covid2019-api.herokuapp.com/total'
+        r = requests.get(url=request_url)
+        info_null = 'Data Not Found' 
+        settings.pings = settings.pings + 1
+        if r.status_code == 200:
+            print('Success! ' + str(settings.pings))
+            print(r.json())
+            data = r.json()
+            info_country =  'Total Worldwide' + '\n'
+            info_last_update = 'Last Update : ' + data['dt']  + '\n'
+            info_confirmed = 'Confirmed : ' + str(data['confirmed'])  + '\n'
+            info_deaths = 'Deaths : ' + str(data['deaths']) + '\n' 
+            info_recovered = 'Recovered : ' + str(data['recovered']) + '\n'
+            await ctx.send(info_country + info_last_update + info_confirmed + info_deaths + info_recovered)
         elif r.status_code == 404:
             print(info_null)
             await ctx.send(info_null)
