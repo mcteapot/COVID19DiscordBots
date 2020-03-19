@@ -31,7 +31,7 @@ bot = commands.Bot(                         # Create a new bot
 
 @bot.event
 async def on_ready():                                       # Do this when the bot is logged in
-    print("COVID-19 Bot is spreading!")
+    print('The more one thinks, the more one feels the hopeless immensity of mans ignorance. - Charles Darwing')
     print(f'Logged in as {bot.user.name} - {bot.user.id}')  # Print the name and ID of the bot logged in.
     print('------')
     return
