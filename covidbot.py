@@ -116,7 +116,7 @@ class Commands(commands.Cog):
             if len(data['data']) == 0:
                 await ctx.send(info_null)
             else:
-                info_state =  data['data'][0]['region']['province'] + '\n'
+                info_state =  'State : ' +  data['data'][0]['region']['province'] + '\n'
                 info_last_update = 'Last Update : ' + data['data'][0]['date']  + '\n'
                 info_confirmed = 'Confirmed : ' + str(data['data'][0]['confirmed'])  + '\n'
                 info_deaths = 'Deaths : ' + str(data['data'][0]['deaths'])  + '\n' 
