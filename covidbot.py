@@ -81,6 +81,53 @@ class Commands(commands.Cog):
             await ctx.send(info_null)
         return
 
+    # Get virus info for US States
+    # Data form https://github.com/axisbits/covid-api
+    @commands.command(
+        name='state',
+        description='Get info of virus of country using  two letter statename',
+        brief='(!state ca, !st ca)Stats per US two letter state',
+        aliases=['st']
+    )
+    async def virus_state_info(self, ctx, state):
+        state = state.upper()
+        state_long = ''
+        info_null = 'Data Not Found'
+        settings.pings = settings.pings + 1
+
+        try:
+            state_long = settings.abbrev_us_state[state]
+            print(settings.abbrev_us_state[state])
+        except KeyError:
+            await ctx.send(info_null)
+            print('State Error')
+            return
+
+        state_long.replace(" ", "%20")
+        request_url = 'https://covid-api.com/api/reports?iso=USA&region_province=' + state_long
+        r = requests.get(url=request_url)
+
+        if r.status_code == 200:
+            # On scuess will get data on country 
+            print('Success! ' + str(settings.pings))
+            print(r.json())
+            data = r.json()
+            # Last check to see if real country
+            if len(data['data']) == 0:
+                await ctx.send(info_null)
+            else:
+                info_state =  data['data'][0]['region']['province'] + '\n'
+                info_last_update = 'Last Update : ' + data['data'][0]['date']  + '\n'
+                info_confirmed = 'Confirmed : ' + str(data['data'][0]['confirmed'])  + '\n'
+                info_deaths = 'Deaths : ' + str(data['data'][0]['deaths'])  + '\n' 
+                info_recovered = 'Recovered : ' + str(data['data'][0]['recovered']) + '\n' 
+                info_new_confirmed = 'New Confirmed ' + str(data['data'][0]['confirmed_diff']) + '\n'
+                await ctx.send(info_state + info_last_update + info_confirmed + info_deaths + info_recovered + info_new_confirmed)
+        elif r.status_code == 404:
+            print(info_null)
+            await ctx.send(info_null)
+        return
+
     # Get virus info of total worldwide
     # Data form https://github.com/nat236919/Covid2019API
     @commands.command(
